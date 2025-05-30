@@ -10,7 +10,13 @@ $client_id = $_SESSION['id_utilisateur'];
 
 // Connexion BDD
 $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "root", "");
-
+$biens_consultes = [];
+if (isset($_SESSION['biens_consultes']) && !empty($_SESSION['biens_consultes'])) {
+    $placeholders = implode(',', array_fill(0, count($_SESSION['biens_consultes']), '?'));
+    $stmt = $pdo->prepare("SELECT * FROM propriete WHERE id_propriete IN ($placeholders)");
+    $stmt->execute($_SESSION['biens_consultes']);
+    $biens_consultes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 // Recup RDV clients
 $stmt = $pdo->prepare("
     SELECT r.id_rdv,r.date, c.heure_debut, c.heure_fin, a.agence, a.telephone, u.nom, u.prenom 
@@ -100,10 +106,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_rdv'])) {
 <?php else: ?>
         <p>Vous n’avez aucun rendez-vous pour l’instant.</p>
     <?php endif; ?>
+	<section>
+    <h2>Mes biens récemment consultés</h2>
+    <?php if (count($biens_consultes) > 0): ?>
+        <ul>
+            <?php foreach ($biens_consultes as $bien): ?>
+                <li>
+                    <a href="fiche_bien.php?id_propriete=<?= $bien['id_propriete'] ?>">
+                        <?= htmlspecialchars($bien['titre']) ?> - <?= htmlspecialchars($bien['ville']) ?> - <?= number_format($bien['prix'], 2, ',', ' ') ?> €
+                    </a>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p>Vous n'avez encore consulté aucun bien.</p>
+    <?php endif; ?>
+</section>
 <h2>Actions rapides</h2>
     <ul>
-        <li><a href="liste_propriete.php">Consulter les biens disponibles</a></li>
+        <li><a href="liste_biens.php">Consulter les biens disponibles</a></li>
         <li><a href="liste_agents.php">Voir les agents immobiliers</a></li>
+		<li><a href="accueil.php">Retour à l’accueil</a><br><br></li>
         <li><a href="deconnexion.php">Se déconnecter</a></li>
     </ul>
 </body>
