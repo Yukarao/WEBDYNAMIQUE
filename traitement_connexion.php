@@ -10,8 +10,7 @@ $charset = 'utf8mb4';
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,];
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
@@ -35,9 +34,10 @@ if (
     // Recherche l'utilisateur dans la base
     $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE email = ?");
     $stmt->execute([$email]);
-    $user = $stmt->fetch();
+		$user = $stmt->fetch();
 
-    if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
+    if ($user && password_verify($mot_de_passe, $user['mot_de_passe']))
+		{
         // on stocke les infos
         $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
         $_SESSION['nom'] = $user['nom'];
@@ -47,14 +47,14 @@ if (
 
         // Redirection vers la page de compte selon le rôle
         if ($user['role'] === 'Admin') {
-            header("Location: admin.php");
-        } elseif ($user['role'] === 'Agent') {
-            header("Location: compte_agent.php");
-        } else {
-            header("Location: compte_client.php");
-        }
-        exit;
-    } else {
+        header("Location: admin.php");
+		} elseif ($user['role'] === 'Agent') {
+        header("Location: compte_agent.php");
+		} else {
+        header("Location: compte_client.php");
+		}
+    exit;
+    }else {
         echo "Identifiants incorrects.";
     }
 } else {
