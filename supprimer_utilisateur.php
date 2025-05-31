@@ -8,7 +8,8 @@ if (!isset($_SESSION['id_utilisateur']) || $_SESSION['role'] !== 'Admin') {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_utilisateur'])) {
     $id_utilisateur = intval($_POST['id_utilisateur']);
-    try {
+    
+	try {
         $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "root", "", [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ]);
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_utilisateur'])) {
 
             $stmt = $pdo->prepare("DELETE FROM creneau WHERE id_agent = ?");
             $stmt->execute([$id_agent]);
+			
             $stmt = $pdo->prepare("DELETE FROM agent WHERE id_agent = ?");
             $stmt->execute([$id_agent]);
         }

@@ -13,7 +13,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "
 $id_admin = $_SESSION['id_utilisateur'];
 
 
-$agents = $pdo->query("SELECT id_utilisateur, nom, prenom FROM utilisateur WHERE role = 'Agent'")->fetchAll();
+$categories = $pdo->query("SELECT id_categorie, nom FROM categorie")->fetchAll();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $titre = $_POST['titre'];
@@ -25,12 +25,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $superficie = $_POST['superficie'];
     $id_agent = $_POST['id_agent'];
 
-    $stmt = $pdo->prepare("INSERT INTO propriete (id_admin, id_agent, titre, description, adresse, ville, prix, type_bien, superficie) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$id_admin, $id_agent, $titre, $description, $adresse, $ville, $prix, $type, $superficie]);
+    $stmt = $pdo->prepare("
+        SELECT a.id_agent
+        FROM agent a
+        JOIN categorie c ON a.specialite = c.nom
+        WHERE c.id_categorie = ?
+        LIMIT 1 ");
+    $stmt->execute([$id_categorie]);
+    $agent = $stmt->fetch();
 
-    header("Location: auth.php");
+    if (!$agent) {
+        die("Aucun agent trouvé pour cette catégorie.");
+    }
+
+    $stmt = $pdo->prepare("
+        INSERT INTO propriete (id_admin, titre, description, adresse, ville, prix, type_bien, superficie, id_categorie, id_agent)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->execute([$id_admin, $titre, $description, $adresse, $ville, $prix, $type_bien, $superficie, $id_categorie, $id_agent]);
+
+    header("Location: admin.php?message=propriete_ajoutee");
     exit;
+}
+?>
 }
 ?>
 
@@ -52,13 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <label>Type de bien : <input type="text" name="type_bien" required></label><br><br>
     <label>Superficie (m²) : <input type="number" name="superficie" required></label><br><br>
 
-    <label>Agent responsable :
-        <select name="id_agent" required>
-            <option value="">-- Choisir un agent --</option>
-            <?php foreach ($agents as $agent): ?>
-                <option value="<?= $agent['id_utilisateur'] ?>">
-                    <?= htmlspecialchars($agent['prenom'] . ' ' . $agent['nom']) ?>
-                </option>
+    <label>Catégorie :
+        <select name="id_categorie" required>
+            <option value="">-- Choisir une catégorie --</option>
+            <?php foreach ($categories as $cat): ?>
+                <option value="<?= $cat['id_categorie'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
             <?php endforeach; ?>
         </select>
     </label><br><br>

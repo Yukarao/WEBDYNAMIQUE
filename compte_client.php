@@ -19,13 +19,13 @@ if (isset($_SESSION['biens_consultes']) && !empty($_SESSION['biens_consultes']))
 }
 // Recup RDV clients
 $stmt = $pdo->prepare("
-    SELECT r.id_rdv,r.date, c.heure_debut, c.heure_fin, a.agence, a.telephone, u.nom, u.prenom 
+    SELECT r.id_rdv,r.jour, c.heure_debut, c.heure_fin, a.agence, a.telephone, u.nom, u.prenom 
     FROM rendezvous r
     JOIN creneau c ON r.id_creneau = c.id_creneau
     JOIN agent a ON c.id_agent = a.id_agent
     JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
     WHERE r.id_client = ?
-    ORDER BY r.date DESC ");
+    ORDER BY r.jour DESC ");
 	
 $stmt->execute([$client_id]);
 $rendezvous = $stmt->fetchAll();
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_rdv'])) {
 <ul>
 
 <?php foreach ($rendezvous as $rdv): ?>
-    <p> Le <?= htmlspecialchars($rdv['date']) ?> de <?= htmlspecialchars($rdv['heure_debut'])?> à <?=htmlspecialchars($rdv['heure_fin'])?>; 
+    <p> Le <?= htmlspecialchars($rdv['jour']) ?> de <?= htmlspecialchars($rdv['heure_debut'])?> à <?=htmlspecialchars($rdv['heure_fin'])?>; 
 		<br> avec l’agent <?= htmlspecialchars($rdv['prenom']) ?> <?= htmlspecialchars($rdv['nom']) ?>
 		<br>(Agence : <?= htmlspecialchars($rdv['agence']?? 'Non renseignée') ?> – Tél : <?= htmlspecialchars($rdv['telephone']?? 'Non renseigné') ?>)
     </p>
@@ -124,8 +124,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['supprimer_rdv'])) {
 </section>
 <h2>Actions rapides</h2>
     <ul>
-        <li><a href="liste_biens.php">Consulter les biens disponibles</a></li>
-        <li><a href="liste_agents.php">Voir les agents immobiliers</a></li>
+		<li><a href="mes_achats.php">Voir mes achats</a></li>
+		<li><a href="messagerie.php">Ecrire à un agent</a></li>
+        <li><a href="tout_parcourir.php">Consulter les différentes catégories de biens</a></li>
+        <li><a href="liste_agents.php">Voir nos agents immobiliers</a></li>
 		<li><a href="accueil.php">Retour à l’accueil</a><br><br></li>
         <li><a href="deconnexion.php">Se déconnecter</a></li>
     </ul>

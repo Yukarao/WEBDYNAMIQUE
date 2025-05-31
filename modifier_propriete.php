@@ -14,8 +14,18 @@ $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "
 	}
 	
 $id_propriete = (int) $_GET['id'];
-$agents = $pdo->query("SELECT id_utilisateur, nom, prenom FROM utilisateur WHERE role = 'Agent'")->fetchAll();
+$categories = $pdo->query("SELECT id_categorie, nom FROM categorie")->fetchAll();
+$stmt = $pdo->prepare("
+    SELECT a.id_agent
+    FROM agent a
+    JOIN categorie c ON a.specialite = c.nom
+    WHERE c.id_categorie = ?
+    LIMIT 1
+");
+$stmt->execute([$id_categorie]);
+$agent = $stmt->fetch();
 
+$id_agent = $agent ? $agent['id_agent'] : null;
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $titre = $_POST['titre'];
     $description = $_POST['description'];
@@ -24,10 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $prix = $_POST['prix'];
     $type = $_POST['type_bien'];
     $superficie = $_POST['superficie'];
-	$id_agent = $_POST['id_agent'];
+	$id_categorie = $_POST['id_categorie'];
 
-    $stmt = $pdo->prepare("UPDATE propriete SET titre = ?, description = ?, adresse = ?, ville = ?, prix = ?, type_bien = ?, superficie = ?, id_agent = ? WHERE id_propriete = ?");
-	$stmt->execute([$titre, $description, $adresse, $ville, $prix, $type, $superficie, $id_agent, $id_propriete]);
+    stmt = $pdo->prepare("UPDATE propriete SET titre = ?, description = ?, adresse = ?, ville = ?, prix = ?, type_bien = ?, superficie = ?, id_categorie = ?, id_agent = ? WHERE id_propriete = ?");
+	$stmt->execute([$titre, $description, $adresse, $ville, $prix, $type, $superficie, $id_categorie, $id_agent, $id_propriete]);
 
     header("Location: admin.php");
     exit;
@@ -61,14 +71,14 @@ if (!$propriete) {
     <label>Type de bien : <input type="text" name="type_bien" value="<?= htmlspecialchars($propriete['type_bien']) ?>" required></label><br><br>
     <label>Superficie (m²) : <input type="number" name="superficie" value="<?= htmlspecialchars($propriete['superficie']) ?>" required></label><br><br>
 	<label>Agent responsable :
-        <select name="id_agent" required>
-            <option value="">-- Choisir un agent --</option>
-            <?php foreach ($agents as $agent): ?>
-                <option value="<?= $agent['id_utilisateur'] ?>" <?= ($agent['id_utilisateur'] == $propriete['id_agent']) ? 'selected' : '' ?>>
-				<?= htmlspecialchars($agent['prenom'] . ' ' . $agent['nom']) ?>
-				</option>
-            <?php endforeach; ?>
-        </select>
+        <select name="id_categorie" required>
+        <option value="">-- Choisir une catégorie --</option>
+        <?php foreach ($categories as $categorie): ?>
+            <option value="<?= $categorie['id_categorie'] ?>" <?= ($categorie['id_categorie'] == $propriete['id_categorie']) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($categorie['nom']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
     </label>
     <input type="submit" value="Enregistrer les modifications">
 </form>

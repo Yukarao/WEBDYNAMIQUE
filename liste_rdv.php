@@ -26,25 +26,25 @@ if ($role === 'Agent') {
 
     
     $stmt = $pdo->prepare("
-        SELECT r.*, c.date, c.heure_debut, c.heure_fin, u.nom AS client_nom, u.prenom AS client_prenom
+        SELECT r.*, c.jour, c.heure_debut, c.heure_fin, u.nom AS client_nom, u.prenom AS client_prenom
         FROM rendezvous r
         JOIN creneau c ON r.id_creneau = c.id_creneau
         JOIN utilisateur u ON r.id_client = u.id_utilisateur
         WHERE r.id_agent = ?
-        ORDER BY c.date, c.heure_debut
+        ORDER BY c.jour, c.heure_debut
     ");
     $stmt->execute([$id_agent]);
     $rdvs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 } elseif ($role === 'Admin') {
     $stmt = $pdo->query("
-    SELECT r.*, c.date, c.heure_debut, c.heure_fin,u.nom AS client_nom, u.prenom AS client_prenom,ua.nom AS agent_nom, ua.prenom AS agent_prenom
+    SELECT r.*, c.jour, c.heure_debut, c.heure_fin,u.nom AS client_nom, u.prenom AS client_prenom,ua.nom AS agent_nom, ua.prenom AS agent_prenom
     FROM rendezvous r
     JOIN creneau c ON r.id_creneau = c.id_creneau
     JOIN utilisateur u ON r.id_client = u.id_utilisateur
     JOIN agent a ON r.id_agent = a.id_agent
     JOIN utilisateur ua ON a.id_utilisateur = ua.id_utilisateur
-    ORDER BY c.date, c.heure_debut");
+    ORDER BY c.jour, c.heure_debut");
     $rdvs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
     die("Rôle non reconnu.");

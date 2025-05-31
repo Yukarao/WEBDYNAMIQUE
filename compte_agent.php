@@ -24,7 +24,7 @@ $stmtInfo->execute([$id_utilisateur]);
 $agentInfos = $stmtInfo->fetch(PDO::FETCH_ASSOC);
 
 //Creneaux
-$stmt = $pdo->prepare("SELECT id_creneau , date, heure_debut, heure_fin, disponible FROM creneau WHERE id_agent = ? AND disponible = 1 ORDER BY date, heure_debut");
+$stmt = $pdo->prepare("SELECT id_creneau , jour, heure_debut, heure_fin, disponible FROM creneau WHERE id_agent = ? AND disponible = 1 ORDER BY jour, heure_debut");
 $stmt->execute([$id_agent]);
 $creneaux_disponibles = $stmt->fetchAll();
 
@@ -103,6 +103,7 @@ $biens = $stmt2->fetchAll();
 
 </section>
 <footer>
+<a href="messagerie.php">Votre messagerie</a>
 <a href="accueil.php">Retour à l’accueil</a><br><br>
 	<a href="deconnexion.php">Déconnexion</a>
 </footer>
