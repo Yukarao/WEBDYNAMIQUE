@@ -172,6 +172,7 @@ $nb_rdv = $pdo->query("SELECT COUNT(*) FROM rendezvous")->fetchColumn();
 </section>
 
 <footer>
+<a href="accueil.php"> Retour à l’accueil</a><br><br>
 	<a href="deconnexion.php">Déconnexion</a>
 </footer>
 </body>
