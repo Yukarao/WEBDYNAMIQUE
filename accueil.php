@@ -20,7 +20,7 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
 
 <body>
 
-<!--  HEADER -->
+
 <header>
     <h1 id= title>OMNES IMMOBILIER</h1>
 	
@@ -46,7 +46,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </nav>
 </header>
 
-<!-- BIENVENUE -->
 <section>
     <h2> Bienvenue chez Omnes Immobilier</h2>
     <p>
@@ -60,7 +59,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </p>
 </section>
 
-<!-- CARROUSEL -->
 <section>
     <h2>Carrousel des propriétés</h2>
     <p>
@@ -90,7 +88,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </div>
 </section>
 
-<!-- BULLETIN IMMOBILIER -->
 <section>
     <h2>Bulletin Immobilier de la semaine</h2>
     <?php if ($bulletin): ?>
@@ -100,13 +97,21 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
             <li>Un article sur la revalorisation des taux d’emprunt</li>
             <li>Le point sur les nouvelles tendances du marché locatif</li>
         </ul>
-        <p><strong><?= htmlspecialchars($bulletin['titre']) ?> - <?= htmlspecialchars($bulletin['ville']) ?></strong></p>
+        <p><strong>Le bien de la semaine est le suivant : <?= htmlspecialchars($bulletin['titre']) ?> - <?= htmlspecialchars($bulletin['ville']) ?>. Plus de 20 visites organisées cette semaine ne manquez pas votre chance !</strong></p>
     <?php else: ?>
         <p>Aucune donnée disponible cette semaine.</p>
     <?php endif; ?>
 </section>
 
-<!-- TÉMOIGNAGES CLIENTS -->
+<section>
+    <h2>Vous avez un projet immobilier mais manquez de fonds ? </h2>
+    <p>N'attendez plus et consultez nos offres d'assurance et de prêt à taux préférentiel !</p>
+	<a href="assurance.php">Notre assurance</a>
+	<a href="banque.php">Notre banque partenaire </a>
+    
+    
+</section>
+
 <section>
     <h2>Ils nous ont fait confiance :</h2>
     <p>Sophie M. – Paris : "Grâce à Omnes Immobilier, j’ai trouvé le logement idéal en un temps record."</p>
@@ -114,7 +119,7 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     <p> Claire & Julien – Nantes : "Une équipe humaine et disponible. Merci pour ce bel investissement."</p>
 </section>
 
-<!--CONTACT -->
+
 
 <section>
 
@@ -126,13 +131,12 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
 </section>
 
 
-<!-- FOOTER -->
+
 <footer>
     <p>© 2025 Omnes Immobilier. All rights reserved.</p>
     <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
 </footer>
 
-	<!-- Gestion carrousel -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll('#carrousel .slide');

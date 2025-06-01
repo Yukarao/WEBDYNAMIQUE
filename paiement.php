@@ -21,6 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expiration = $_POST['expiration'];
     $code = $_POST['code'];
     $solde = $_POST['solde'];
+	$code_cadeau = $_POST['code_cadeau'] ?? '';
+	$reduction = 0;
+
+	if (!empty($code_cadeau)) {
+    if (strtoupper($code_cadeau) === 'OMNES10') {
+        $reduction = 0.10 * $montant;
+        $montant -= $reduction;
+		}
+	}
+	if ($reduction > 0) {
+    echo "<p style='color:green;'>Un code promo a été appliqué : -$reduction €</p>";}
 
     $statut = $solde >= $montant ? 'accepté' : 'refusé';
 
@@ -64,7 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label>Date d'expiration : <input type="month" name="expiration" required></label><br><br>
         <label>Code de sécurité : <input type="text" name="code"  pattern="[0-9]{3,4}" maxlength="4" required></label><br><br>
         <label>Solde disponible : <input type="number" name="solde" min="0" step="10000" required></label><br><br>
-        <button type="submit">Valider le paiement</button>
+        <h4>Code promo ou carte cadeau (facultatif) :</h4>
+		<input type="text" name="code_cadeau" placeholder="ex: OMNES10"><br><br>
+		
+		<button type="submit">Valider le paiement</button>
      </form>
 <?php endif; ?>
 </body>
