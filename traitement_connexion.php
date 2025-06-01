@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 // Connexion a la base de données

@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "root", "", [

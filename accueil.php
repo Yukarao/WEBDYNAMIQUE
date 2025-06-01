@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,]);
@@ -21,7 +22,8 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
 
 <!--  HEADER -->
 <header>
-    <h1>OMNES IMMOBILIER</h1>
+    <h1 id= title>OMNES IMMOBILIER</h1>
+	
     <nav>
         <a href="accueil.php">Accueil</a> |
         <a href="tout_parcourir.php">Tout parcourir</a> |
@@ -69,14 +71,14 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
         Vous pouvez également rencontrer les spécialistes d’Omnes Immobilier : des professionnels passionnés à votre écoute, prêts à vous guider avec transparence et expertise.
     </p>
 
-   <div id="carrousel" style="position: relative; width: 300px; height: 350px; overflow: hidden; margin: 20px auto;">
+   <div id="carrousel" style="position: relative; width: 100%; max-width: 700px; height: auto; overflow: hidden; margin: 40px auto;">
         <?php foreach ($carrousel as $index => $bien): ?>
             <div class="slide" style="display: <?= $index === 0 ? 'block' : 'none' ?>;">
                 <p><strong><?= htmlspecialchars($bien['titre']) ?></strong></p>
                 <p><?= htmlspecialchars($bien['ville']) ?> - <?= number_format($bien['prix'], 2, ',', ' ') ?> €</p>
                 <?php $imagePath = 'images/' . $bien['id_propriete'] . '.jpg';
                 if (file_exists($imagePath)): ?>
-                    <img src="<?= $imagePath ?>" alt="Image du bien" width="250">
+                    <img src="<?= $imagePath ?>" alt="Image du bien" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 6px;">
                 <?php else: ?>
                     <p><em>Pas d’image</em></p>
                 <?php endif; ?>

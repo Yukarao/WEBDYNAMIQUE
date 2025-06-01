@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 // Connexion a la base de données
 $host = 'localhost';

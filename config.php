@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 $host = 'localhost';
 $db   = 'omnes_immobilier';

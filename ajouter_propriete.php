@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 
@@ -48,8 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     exit;
 }
 ?>
-}
-?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

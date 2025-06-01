@@ -1,4 +1,4 @@
-
+<link rel="stylesheet" href="style.css">
 <?php
 if (!isset($_GET['id_agent'])) {
     echo "Agent non spécifié.";
