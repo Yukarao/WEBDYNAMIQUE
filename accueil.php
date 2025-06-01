@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "root", "", [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,]);
@@ -19,9 +20,10 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
 
 <body>
 
-<!--  HEADER -->
+
 <header>
-    <h1>OMNES IMMOBILIER</h1>
+    <h1 id= title>OMNES IMMOBILIER</h1>
+	
     <nav>
         <a href="accueil.php">Accueil</a> |
         <a href="tout_parcourir.php">Tout parcourir</a> |
@@ -44,7 +46,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </nav>
 </header>
 
-<!-- BIENVENUE -->
 <section>
     <h2> Bienvenue chez Omnes Immobilier</h2>
     <p>
@@ -58,7 +59,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </p>
 </section>
 
-<!-- CARROUSEL -->
 <section>
     <h2>Carrousel des propriétés</h2>
     <p>
@@ -69,14 +69,14 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
         Vous pouvez également rencontrer les spécialistes d’Omnes Immobilier : des professionnels passionnés à votre écoute, prêts à vous guider avec transparence et expertise.
     </p>
 
-   <div id="carrousel" style="position: relative; width: 300px; height: 350px; overflow: hidden; margin: 20px auto;">
+   <div id="carrousel" style="position: relative; width: 100%; max-width: 700px; height: auto; overflow: hidden; margin: 40px auto;">
         <?php foreach ($carrousel as $index => $bien): ?>
             <div class="slide" style="display: <?= $index === 0 ? 'block' : 'none' ?>;">
                 <p><strong><?= htmlspecialchars($bien['titre']) ?></strong></p>
                 <p><?= htmlspecialchars($bien['ville']) ?> - <?= number_format($bien['prix'], 2, ',', ' ') ?> €</p>
                 <?php $imagePath = 'images/' . $bien['id_propriete'] . '.jpg';
                 if (file_exists($imagePath)): ?>
-                    <img src="<?= $imagePath ?>" alt="Image du bien" width="250">
+                    <img src="<?= $imagePath ?>" alt="Image du bien" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 6px;">
                 <?php else: ?>
                     <p><em>Pas d’image</em></p>
                 <?php endif; ?>
@@ -88,7 +88,6 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     </div>
 </section>
 
-<!-- BULLETIN IMMOBILIER -->
 <section>
     <h2>Bulletin Immobilier de la semaine</h2>
     <?php if ($bulletin): ?>
@@ -98,13 +97,21 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
             <li>Un article sur la revalorisation des taux d’emprunt</li>
             <li>Le point sur les nouvelles tendances du marché locatif</li>
         </ul>
-        <p><strong><?= htmlspecialchars($bulletin['titre']) ?> - <?= htmlspecialchars($bulletin['ville']) ?></strong></p>
+        <p><strong>Le bien de la semaine est le suivant : <?= htmlspecialchars($bulletin['titre']) ?> - <?= htmlspecialchars($bulletin['ville']) ?>. Plus de 20 visites organisées cette semaine ne manquez pas votre chance !</strong></p>
     <?php else: ?>
         <p>Aucune donnée disponible cette semaine.</p>
     <?php endif; ?>
 </section>
 
-<!-- TÉMOIGNAGES CLIENTS -->
+<section>
+    <h2>Vous avez un projet immobilier mais manquez de fonds ? </h2>
+    <p>N'attendez plus et consultez nos offres d'assurance et de prêt à taux préférentiel !</p>
+	<a href="assurance.php">Notre assurance</a>
+	<a href="banque.php">Notre banque partenaire </a>
+    
+    
+</section>
+
 <section>
     <h2>Ils nous ont fait confiance :</h2>
     <p>Sophie M. – Paris : "Grâce à Omnes Immobilier, j’ai trouvé le logement idéal en un temps record."</p>
@@ -112,7 +119,7 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
     <p> Claire & Julien – Nantes : "Une équipe humaine et disponible. Merci pour ce bel investissement."</p>
 </section>
 
-<!--CONTACT -->
+
 
 <section>
 
@@ -124,13 +131,12 @@ $bulletin = $pdo->query("SELECT * FROM propriete ORDER BY id_propriete DESC LIMI
 </section>
 
 
-<!-- FOOTER -->
+
 <footer>
     <p>© 2025 Omnes Immobilier. All rights reserved.</p>
     <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
 </footer>
 
-	<!-- Gestion carrousel -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const slides = document.querySelectorAll('#carrousel .slide');

@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 
@@ -33,9 +34,9 @@ $stmt = $pdo->prepare("
     LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
     WHERE p.id_propriete = ?
 ");
+
 $stmt->execute([$id_propriete]);
 $bien = $stmt->fetch();
-
 if (!$bien) {
     die("Propriété introuvable.");
 }
@@ -57,7 +58,6 @@ if (!$bien) {
     <?php else: ?>
         <p><em>Aucune image pour ce bien.</em></p>
     <?php endif; ?>
-
     <p><strong>Type :</strong> <?= htmlspecialchars($bien['type_bien']) ?></p>
     <p><strong>Ville :</strong> <?= htmlspecialchars($bien['ville']) ?></p>
     <p><strong>Adresse :</strong> <?= htmlspecialchars($bien['adresse']) ?></p>
@@ -66,8 +66,25 @@ if (!$bien) {
     <p><strong>Description :</strong> <?= nl2br(htmlspecialchars($bien['description'])) ?></p>
 
     <h3>Agent référent :</h3>
-    <p><?= htmlspecialchars($bien['agent_prenom'] ?? 'Agent inconnu') . ' ' . htmlspecialchars($bien['agent_nom'] ?? '') ?></p
+    <p><?= htmlspecialchars($bien['agent_prenom'] ?? 'Agent inconnu') . ' ' . htmlspecialchars($bien['agent_nom'] ?? '') ?></p>
+	
+	
+	<?php if ($_SESSION['role'] === 'Client'): ?>
+    <?php if ($bien['type_bien'] === 'Immobilier en vente par enchère'): ?>
+        <form action="participer_enchere.php" method="GET">
+            <input type="hidden" name="id_propriete" value="<?= $bien['id_propriete'] ?>">
+            <button type="submit">Faire une offre</button>
+        </form>
+    <?php else: ?>
+        <form action="paiement.php" method="GET">
+            <input type="hidden" name="id_propriete" value="<?= $bien['id_propriete'] ?>">
+            <input type="hidden" name="prix" value="<?= $bien['prix'] ?>">
+            <button type="submit">Acheter</button>
+        </form>
+    <?php endif; ?>
+<?php endif; ?>
 
+	<a href="liste_agents.php">Voir les détails de nos agents</a>
     <a href="prise_rdv.php?id_agent=<?= $bien['id_agent_utilisateur'] ?>">Prendre rendez-vous</a>
     <br><br>
     <a href="liste_biens.php">Retour à la liste</a>

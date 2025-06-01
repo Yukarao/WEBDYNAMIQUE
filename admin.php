@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 if (!isset($_SESSION['id_utilisateur']) || $_SESSION['role'] !== 'Admin') {
@@ -15,11 +16,24 @@ $nb_biens = $pdo->query("SELECT COUNT(*) FROM propriete")->fetchColumn();
 $biens = $pdo->query("
     SELECT p.*, u.nom AS agent_nom, u.prenom AS agent_prenom
     FROM propriete p
-    LEFT JOIN utilisateur u ON p.id_agent = u.id_utilisateur
+    LEFT JOIN agent a ON p.id_agent = a.id_agent
+    LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 // RDV
-$nb_rdv = $pdo->query("SELECT COUNT(*) FROM rendezvous")->fetchColumn();
+$stmt2 = $pdo->query("
+    SELECT r.*, 
+           c.nom AS client_nom, 
+           c.prenom AS client_prenom, 
+           a.nom AS agent_nom, 
+           a.prenom AS agent_prenom
+    FROM rendezvous r
+    JOIN utilisateur c ON r.id_client = c.id_utilisateur
+    JOIN agent ag ON r.id_agent = ag.id_agent
+    JOIN utilisateur a ON ag.id_utilisateur = a.id_utilisateur
+    ORDER BY r.jour, r.heure
+");
+$rdvs = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +98,7 @@ $nb_rdv = $pdo->query("SELECT COUNT(*) FROM rendezvous")->fetchColumn();
                 <th>Type</th>
                 <th>Superficie (m²)</th>
 				<th>Agent référent</th>
-                <th>Actions</th>
+                
             </tr>
             <?php foreach ($biens as $bien): ?>
                 <tr>
@@ -94,7 +108,7 @@ $nb_rdv = $pdo->query("SELECT COUNT(*) FROM rendezvous")->fetchColumn();
                     <td><?= htmlspecialchars($bien['prix']) ?></td>
                     <td><?= htmlspecialchars($bien['type_bien']) ?></td>
                     <td><?= htmlspecialchars($bien['superficie']) ?></td>
-					<td><?= htmlspecialchars($bien['agent_prenom'] ?? 'Non renseigné') ?> <?= htmlspecialchars($bien['agent_nom'] ?? '') ?></td
+					<td><?= (!empty($bien['agent_prenom']) || !empty($bien['agent_nom']))? htmlspecialchars($bien['agent_prenom']) . ' ' . htmlspecialchars($bien['agent_nom']): 'Non renseigné' ?></td>
 				</tr>
                     <td>
                         <a href="modifier_propriete.php?id=<?= $bien['id_propriete'] ?>">Modifier</a>
@@ -115,53 +129,32 @@ $nb_rdv = $pdo->query("SELECT COUNT(*) FROM rendezvous")->fetchColumn();
 
 <section>
 	<h2>Gestion des rendez-vous</h2>
-    <ul>
-        <li><a href="liste_rdv.php">Voir tous les rendez-vous</a></li>
-    </ul>
+    <?php if (count($rdvs) > 0): ?>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Client</th>
+            <th>Agent</th>
+        </tr>
+        <?php foreach ($rdvs as $rdv): ?>
+            <tr>
+                <td><?= htmlspecialchars($rdv['jour']) ?></td>
+                <td><?= htmlspecialchars($rdv['heure']) ?></td>
+                <td><?= htmlspecialchars($rdv['client_prenom'] . ' ' . $rdv['client_nom']) ?></td>
+                <td><?= htmlspecialchars($rdv['agent_prenom'] . ' ' . $rdv['agent_nom']) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php else: ?>
+    <p>Aucun rendez-vous enregistré.</p>
+<?php endif; ?>
 </section>
 <section>
     <h2>Gestion des créneaux des agents</h2>
-    <p><a href="modifier_creneau.php">Ajouter ou modifier des créneaux</a></p>
-
-<?php
-    $creneaux = $pdo->query("
-        SELECT c.*, u.nom, u.prenom
-        FROM creneau c
-        LEFT JOIN agent a ON c.id_agent = a.id_agent
-        LEFT JOIN utilisateur u ON a.id_utilisateur = u.id_utilisateur
-        ORDER BY c.date, c.heure_debut
-    ")->fetchAll(PDO::FETCH_ASSOC);
-?>
-
-    <?php if (count($creneaux) > 0): ?>
-        <table border="1" cellpadding="8">
-            <tr>
-                <th>Agent</th>
-                <th>Date</th>
-                <th>Début</th>
-                <th>Fin</th>
-                <th>Disponible</th>
-                <th>Actions</th>
-            </tr>
-            <?php foreach ($creneaux as $c): ?>
-                <tr>
-                    <td><?= htmlspecialchars($c['prenom'] . ' ' . $c['nom']) ?></td>
-                    <td><?= htmlspecialchars($c['date']) ?></td>
-                    <td><?= htmlspecialchars($c['heure_debut']) ?></td>
-                    <td><?= htmlspecialchars($c['heure_fin']) ?></td>
-                    <td><?= $c['disponible'] ? 'Oui' : 'Non' ?></td>
-                    <td>
-                        <form action="supprimer_creneau.php" method="POST" onsubmit="return confirm('Supprimer ce créneau ?');" style="display:inline;">
-                            <input type="hidden" name="id_creneau" value="<?= $c['id_creneau'] ?>">
-                            <button type="submit">Supprimer</button>
-                        </form>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    <?php else: ?>
-        <p>Aucun créneau enregistré.</p>
-    <?php endif; ?>
+	<li><a href="liste_creneaux.php">Afficher les créneaux des agents</a></li>
+    <li><a href="modifier_creneau.php">Ajouter ou modifier des créneaux</a></li>
+	</ul>
 </section>
 <section>
 	<h2>Mon profil</h2>

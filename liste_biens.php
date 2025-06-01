@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 if (!isset($_SESSION['id_utilisateur']) || $_SESSION['role'] !== 'Client') {
@@ -9,7 +10,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=omnes_immobilier;charset=utf8mb4", "
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
 ]);
 
-$biens = $pdo->query("SELECT * FROM propriete")->fetchAll(PDO::FETCH_ASSOC);
+$biens = $pdo->query("SELECT * FROM propriete WHERE statut = 'disponible'")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>

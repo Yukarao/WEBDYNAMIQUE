@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="style.css">
 <?php
 session_start();
 if (!isset($_SESSION['id_utilisateur'])) {
@@ -42,11 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
    }
 
     // Redirection après modif
-    echo "<script>
-        alert('Modifications enregistrées avec succès.');
-        window.location.href = 'compte_" . strtolower($role) . ".php';
-    </script>";
-    exit;
+    $redirectPage = ($role === 'Admin') ? 'admin.php' : 'compte_' . strtolower($role) . '.php';
+	echo "<script>
+		alert('Modifications enregistrées avec succès.');
+		window.location.href = '$redirectPage';
+		</script>";
+	exit;
 }
 
 // champs pre remplis
